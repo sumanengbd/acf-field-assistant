@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "ACF Field Assistant",
+  "version": "1.1.0",
+  "description": "Smart label, placeholder, and instructions suggestions for the ACF field editor. One-click recommended setup, recently used picks, and keyboard shortcuts.",
+  "author": "Suman Ali",
+  "homepage_url": "https://github.com/sumanengbd/acf-field-assistant",
+
+  "action": {
+    "default_popup": "assets/popup.html",
+    "default_icon": {
+      "16":  "assets/icons/icon-16.png",
+      "48":  "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    },
+    "default_title": "ACF Field Assistant"
+  },
+
+  "icons": {
+    "16":  "assets/icons/icon-16.png",
+    "48":  "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
+
+  "background": {
+    "service_worker": "assets/js/background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js":  ["assets/js/content.js"],
+      "css": ["assets/css/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+
+  "commands": {
+    "focus-label": {
+      "suggested_key": {
+        "default": "Alt+Shift+L"
+      },
+      "description": "Focus field label suggestions"
+    },
+    "focus-placeholder": {
+      "suggested_key": {
+        "default": "Alt+Shift+P"
+      },
+      "description": "Focus placeholder suggestions"
+    },
+    "focus-instructions": {
+      "suggested_key": {
+        "default": "Alt+Shift+I"
+      },
+      "description": "Focus instructions suggestions"
+    }
+  }
+}
