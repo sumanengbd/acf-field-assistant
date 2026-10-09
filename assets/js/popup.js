@@ -3,16 +3,18 @@
  */
 
 const SETTINGS_STORAGE_KEY = 'acfFaSettings';
+const RECENT_STORAGE_KEY = 'acfFaRecentSuggestions';
 
 const DEFAULT_SETTINGS = {
-	settingsVersion: 2,
+	settingsVersion: 3,
 	enableLabelSuggestions: true,
 	enablePlaceholderSuggestions: true,
 	enableInstructionsSuggestions: true,
 	enableRecommendedSetup: true,
 	enableRecentlyUsed: true,
 	enableKeyboardShortcuts: true,
-	maxSuggestions: 4
+	maxSuggestions: 4,
+	placeholderTone: 'enter_your'
 };
 
 const SETTINGS_VERSION = DEFAULT_SETTINGS.settingsVersion;
@@ -22,10 +24,13 @@ const migrateStoredSettings = (stored) => {
 	let changed = false;
 	const storedVersion = stored && stored.settingsVersion ? stored.settingsVersion : 1;
 
-	if (storedVersion < SETTINGS_VERSION) {
+	if (storedVersion < 2) {
 		if (!stored || stored.maxSuggestions === undefined || stored.maxSuggestions === 6) {
 			settings.maxSuggestions = DEFAULT_SETTINGS.maxSuggestions;
 		}
+	}
+
+	if (storedVersion < SETTINGS_VERSION) {
 		settings.settingsVersion = SETTINGS_VERSION;
 		changed = true;
 	}
@@ -116,7 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		enableRecommendedSetup: document.getElementById('enable-setup'),
 		enableRecentlyUsed: document.getElementById('enable-recent'),
 		enableKeyboardShortcuts: document.getElementById('enable-shortcuts'),
-		maxSuggestions: document.getElementById('max-suggestions')
+		maxSuggestions: document.getElementById('max-suggestions'),
+		placeholderTone: document.getElementById('placeholder-tone')
 	};
 
 	const tabButtons = document.querySelectorAll('.tab-btn');
@@ -177,6 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			if (el.type === 'checkbox') {
 				settings[key] = el.checked;
+			} else if (key === 'placeholderTone') {
+				settings[key] = el.value || DEFAULT_SETTINGS.placeholderTone;
 			} else {
 				settings[key] = parseInt(el.value, 10) || DEFAULT_SETTINGS[key];
 			}
@@ -202,6 +210,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	if (form) {
 		form.addEventListener('change', saveSettings);
+	}
+
+	const clearDataBtn = document.getElementById('clear-data-btn');
+	const applyDefaultsToForm = () => {
+		Object.keys(fields).forEach((key) => {
+			const el = fields[key];
+			if (!el) return;
+
+			if (el.type === 'checkbox') {
+				el.checked = !!DEFAULT_SETTINGS[key];
+			} else {
+				el.value = String(DEFAULT_SETTINGS[key]);
+			}
+		});
+	};
+
+	const clearSavedData = () => {
+		const confirmed = window.confirm(
+			'Clear all ACF Field Assistant saved data?\n\nThis resets settings to defaults and removes recent suggestions.'
+		);
+		if (!confirmed) return;
+
+		const defaults = Object.assign({}, DEFAULT_SETTINGS);
+		const syncPayload = {};
+		syncPayload[SETTINGS_STORAGE_KEY] = defaults;
+
+		const finish = () => {
+			applyDefaultsToForm();
+			if (saveStatus) {
+				saveStatus.textContent = 'Data cleared';
+				setTimeout(() => { saveStatus.textContent = ''; }, 2000);
+			}
+
+			chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+				const tab = tabs && tabs[0];
+				if (tab && tab.id) {
+					chrome.tabs.sendMessage(tab.id, { action: 'settings-updated' });
+				}
+			});
+		};
+
+		chrome.storage.sync.set(syncPayload, () => {
+			chrome.storage.local.remove(RECENT_STORAGE_KEY, finish);
+		});
+	};
+
+	if (clearDataBtn) {
+		clearDataBtn.addEventListener('click', clearSavedData);
 	}
 
 	loadSettings();

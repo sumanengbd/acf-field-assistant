@@ -17,10 +17,13 @@
 		'forms': 'gravity_forms',
 		'gravity_form': 'gravity_forms',
 		'gravityforms': 'gravity_forms',
+		'gravity_forms_field': 'gravity_forms',
 		'acf_gravity_forms': 'gravity_forms',
 		'post_types': 'post_type',
+		'post_type_field': 'post_type',
 		'acfe_post_types': 'post_type',
 		'icon_picker': 'custom_icon_picker',
+		'icon_picker_advanced': 'custom_icon_picker',
 		'acf_icon_picker': 'custom_icon_picker',
 		'fonticonpicker': 'custom_icon_picker',
 		'font_awesome': 'custom_icon_picker',
@@ -40,11 +43,11 @@
 	const FIELD_LABEL_SUGGESTIONS = {
 		// Basic
 		'text': ['Title', 'Sub Title', 'Name', 'Heading', 'Label', 'Caption'],
-		'textarea': ['Description', 'Content', 'Bio', 'Summary', 'Notes', 'Details'],
+		'textarea': ['Description', 'Content', 'Bio', 'Summary', 'Notes', 'Details', 'Embed Code'],
 		'number': ['Number', 'Amount', 'Quantity', 'Price', 'Count', 'Total'],
 		'range': ['Range', 'Level', 'Rating', 'Score', 'Progress', 'Scale'],
 		'email': ['Email', 'Email Address', 'Contact Email', 'Work Email', 'Support Email', 'Newsletter Email'],
-		'url': ['Image', 'URL', 'Website', 'Site', 'Social URL', 'Social Media URL'],
+		'url': ['Website', 'URL', 'Profile URL', 'Video URL', 'Button Link', 'Social URL'],
 		'password': ['Password', 'Passcode', 'PIN', 'Secret Key', 'Access Code', 'Credentials'],
 
 		// Content
@@ -62,7 +65,7 @@
 		'true_false': ['Enable', 'Disable', 'Active', 'Show', 'Hide', 'Toggle'],
 
 		// Relational
-		'link': ['Button', 'Link', 'URL', 'Call to Action', 'Read More', 'Learn More'],
+		'link': ['Link', 'Button', 'Website'],
 		'post_object': ['Post', 'Article', 'Page', 'Item', 'Entry', 'Content'],
 		'post_type': ['Post Type', 'Posts', 'Content Type', 'CPT', 'Entries', 'Items'],
 		'page_link': ['Page', 'Page Link', 'Internal Link', 'Page URL', 'Target Page', 'Reference'],
@@ -105,9 +108,32 @@
 		'star_rating': ['Rating', 'Stars', 'Review Score', 'Score', 'Review', 'Feedback'],
 		'signature': ['Signature', 'Sign Here', 'Signed By', 'Approval', 'Sign Off', 'Consent'],
 		'qrcode': ['QR Code', 'Barcode', 'Scan Code', 'Quick Link', 'Code', 'QR Link'],
+		'nav_menu': ['Menu', 'Nav Menu', 'Navigation', 'Primary Menu', 'Footer Menu', 'Menu Location'],
 
 		'_default': ['Title', 'Label', 'Name', 'Field', 'Value', 'Setting']
 	};
+
+	/**
+	 * Child-field labels when nested inside a repeater / flexible / group
+	 * whose parent label or name matches a keyword.
+	 */
+	const REPEATER_CHILD_LABELS = [
+		{ match: ['team', 'member', 'staff', 'people'], labels: ['Name', 'Role', 'Photo', 'Bio'] },
+		{ match: ['testimonial', 'review', 'quote'], labels: ['Quote', 'Name', 'Photo', 'Company'] },
+		{ match: ['faq', 'question', 'accordion'], labels: ['Question', 'Answer'] },
+		{ match: ['slide', 'slider', 'carousel', 'hero'], labels: ['Title', 'Image', 'Caption', 'Button'] },
+		{ match: ['social', 'network'], labels: ['Platform', 'URL', 'Icon'] },
+		{ match: ['feature', 'benefit'], labels: ['Title', 'Icon', 'Description'] },
+		{ match: ['service'], labels: ['Title', 'Icon', 'Description', 'Link'] },
+		{ match: ['step', 'process', 'how it'], labels: ['Title', 'Description', 'Number'] },
+		{ match: ['menu', 'nav', 'link item'], labels: ['Label', 'URL', 'Icon'] },
+		{ match: ['gallery', 'photo', 'image item'], labels: ['Image', 'Caption', 'Alt Text'] },
+		{ match: ['job', 'career', 'vacancy'], labels: ['Title', 'Location', 'Description'] },
+		{ match: ['event'], labels: ['Title', 'Date', 'Location', 'Description'] },
+		{ match: ['product', 'item shop'], labels: ['Title', 'Price', 'Image', 'Description'] },
+		{ match: ['client', 'partner', 'logo'], labels: ['Name', 'Logo', 'URL'] },
+		{ match: ['box', 'card', 'item'], labels: ['Title', 'Description', 'Icon'] }
+	];
 
 	/**
 	 * Field types that show Instructions suggestions.
@@ -141,7 +167,7 @@
 		'textarea': {
 			label: 'Description',
 			name: 'description',
-			placeholder: 'Write your description'
+			placeholder: 'Enter your description'
 		},
 		'email': {
 			label: 'Email Address',
@@ -149,8 +175,8 @@
 			placeholder: 'Enter your email address'
 		},
 		'url': {
-			label: 'Website URL',
-			name: 'website_url',
+			label: 'Website',
+			name: 'website',
 			placeholder: 'https://example.com'
 		},
 		'number': {
@@ -241,15 +267,104 @@
 		}
 	};
 
+	/**
+	 * All cycleable ACF field type slugs.
+	 * Default shortcuts group by the **first letter** of each slug
+	 * (e.g. T → tab, taxonomy, text, textarea, time_picker, true_false).
+	 */
+	const CYCLEABLE_FIELD_TYPES = [
+		'accordion', 'address',
+		'button_group',
+		'checkbox', 'clone', 'color_picker',
+		'date_picker', 'date_time_picker',
+		'email',
+		'file', 'flexible_content',
+		'gallery', 'google_map', 'gravity_forms_field', 'group',
+		'icon_picker_advanced', 'image',
+		'link',
+		'message',
+		'nav_menu', 'number',
+		'oembed',
+		'page_link', 'password', 'post_object', 'post_type_field',
+		'radio', 'range', 'relationship', 'repeater',
+		'select',
+		'tab', 'table', 'taxonomy', 'text', 'textarea', 'time_picker', 'true_false',
+		'url', 'user',
+		'wysiwyg'
+	];
+
+	const buildTypeCyclesByFirstLetter = (types) => {
+		const cycles = {};
+
+		types.forEach((type) => {
+			const letter = String(type || '').charAt(0).toLowerCase();
+			if (!letter || !/[a-z]/.test(letter)) return;
+			if (!cycles[letter]) cycles[letter] = [];
+			if (!cycles[letter].includes(type)) {
+				cycles[letter].push(type);
+			}
+		});
+
+		Object.keys(cycles).forEach((letter) => {
+			cycles[letter].sort((a, b) => a.localeCompare(b));
+		});
+
+		return cycles;
+	};
+
+	/**
+	 * Preferred shortcut letter when it differs from the slug's first letter.
+	 * e.g. nav_menu → M (not N)
+	 */
+	const TYPE_CYCLE_LETTER_OVERRIDES = {
+		nav_menu: 'm'
+	};
+
+	const applyTypeCycleLetterOverrides = (cycles) => {
+		const next = Object.assign({}, cycles);
+
+		Object.keys(TYPE_CYCLE_LETTER_OVERRIDES).forEach((type) => {
+			const preferred = TYPE_CYCLE_LETTER_OVERRIDES[type];
+			const natural = String(type).charAt(0).toLowerCase();
+
+			Object.keys(next).forEach((letter) => {
+				next[letter] = (next[letter] || []).filter((slug) => slug !== type);
+				if (!next[letter].length) {
+					delete next[letter];
+				}
+			});
+
+			if (!next[preferred]) next[preferred] = [];
+			if (!next[preferred].includes(type)) {
+				next[preferred].push(type);
+			}
+			next[preferred].sort((a, b) => a.localeCompare(b));
+
+			// Keep natural letter list intact for other types; override only moves this slug
+			if (natural !== preferred && next[natural] && !next[natural].length) {
+				delete next[natural];
+			}
+		});
+
+		return next;
+	};
+
+	const DEFAULT_TYPE_CYCLES = applyTypeCycleLetterOverrides(
+		buildTypeCyclesByFirstLetter(CYCLEABLE_FIELD_TYPES)
+	);
+
 	const DEFAULT_SETTINGS = {
-		settingsVersion: 2,
+		settingsVersion: 6,
 		enableLabelSuggestions: true,
 		enablePlaceholderSuggestions: true,
 		enableInstructionsSuggestions: true,
 		enableRecommendedSetup: true,
 		enableRecentlyUsed: true,
 		enableKeyboardShortcuts: true,
-		maxSuggestions: 4
+		maxSuggestions: 4,
+		placeholderTone: 'enter_your',
+		typeCycleModifier: 'alt',
+		typeCycles: Object.assign({}, DEFAULT_TYPE_CYCLES)
 	};
 
 	const SETTINGS_VERSION = DEFAULT_SETTINGS.settingsVersion;
@@ -257,20 +372,98 @@
 	const RECENT_STORAGE_KEY = 'acfFaRecentSuggestions';
 	const SETTINGS_STORAGE_KEY = 'acfFaSettings';
 
+	const TYPE_LABELS = {
+		text: 'Text',
+		textarea: 'Textarea',
+		true_false: 'True / False',
+		tab: 'Tab',
+		table: 'Table',
+		taxonomy: 'Taxonomy',
+		time_picker: 'Time',
+		range: 'Range',
+		radio: 'Radio',
+		relationship: 'Relationship',
+		repeater: 'Repeater',
+		image: 'Image',
+		number: 'Number',
+		email: 'Email',
+		url: 'URL',
+		user: 'User',
+		file: 'File',
+		flexible_content: 'Flexible Content',
+		wysiwyg: 'WYSIWYG',
+		oembed: 'oEmbed',
+		gallery: 'Gallery',
+		group: 'Group',
+		google_map: 'Google Map',
+		select: 'Select',
+		checkbox: 'Checkbox',
+		color_picker: 'Color',
+		clone: 'Clone',
+		button_group: 'Button Group',
+		link: 'Link',
+		post_object: 'Post Object',
+		page_link: 'Page Link',
+		password: 'Password',
+		date_picker: 'Date',
+		date_time_picker: 'Date Time',
+		accordion: 'Accordion',
+		address: 'Address',
+		message: 'Message',
+		gravity_forms_field: 'Gravity Forms',
+		post_type_field: 'Post Type',
+		nav_menu: 'Nav Menu',
+		icon_picker_advanced: 'Icon Picker'
+	};
+
 	/**
 	 * Main Controller Instance
 	 */
 	const ACFFieldAssistant = {
 
 		settings: Object.assign({}, DEFAULT_SETTINGS),
-		_recentCache: { label: [], placeholder: [], instructions: [] },
+		_recentStore: {},
 		_initialized: false,
 		_eventsBound: false,
 		_acfBound: false,
 		_scanTimer: null,
+		_cyclePanelOpen: false,
+
+		isFieldGroupEditorPage: function() {
+			if (!window.location.href.includes('/wp-admin/')) {
+				return false;
+			}
+
+			try {
+				const params = new URLSearchParams(window.location.search);
+				if (params.get('post_type') === 'acf-field-group') {
+					return true;
+				}
+			} catch (e) {
+				// Ignore invalid query strings
+			}
+
+			if (document.body && document.body.classList.contains('post-type-acf-field-group')) {
+				return true;
+			}
+
+			if (document.getElementById('acf-field-group-fields')) {
+				return true;
+			}
+
+			return false;
+		},
+
+		removeInjectedUi: function() {
+			this.closeTypeCyclePanel();
+			document.querySelectorAll(
+				'.acf-fa-suggestions-wrapper, .acf-fa-apply-setup-btn, .acf-fa-undo-setup-btn, .acf-fa-copy-name, .acf-fa-cycle-panel, .acf-fa-cycle-toast'
+			).forEach((el) => el.remove());
+		},
 
 		init: function() {
-			if (!window.location.href.includes('/wp-admin/')) {
+			if (!this.isFieldGroupEditorPage()) {
+				this.removeInjectedUi();
 				return;
 			}
 
@@ -282,6 +475,7 @@
 
 			// Bind events immediately — do not wait for chrome.storage
 			this.setupEventDelegation();
+			this.setupTypeCycleShortcuts();
 			this.setupMutationObserver();
 			this.setupMessageListener();
 			this.setupStorageListener();
@@ -312,6 +506,17 @@
 			s.enableRecentlyUsed = s.enableRecentlyUsed !== false;
 			s.enableKeyboardShortcuts = s.enableKeyboardShortcuts !== false;
 			s.maxSuggestions = Math.max(1, parseInt(s.maxSuggestions, 10) || DEFAULT_SETTINGS.maxSuggestions);
+			if (!['enter_your', 'ellipsis', 'short'].includes(s.placeholderTone)) {
+				s.placeholderTone = DEFAULT_SETTINGS.placeholderTone;
+			}
+			if (!['alt', 'ctrlShift', 'shift'].includes(s.typeCycleModifier)) {
+				s.typeCycleModifier = DEFAULT_SETTINGS.typeCycleModifier;
+			}
+			if (!s.typeCycles || typeof s.typeCycles !== 'object') {
+				s.typeCycles = Object.assign({}, DEFAULT_TYPE_CYCLES);
+			} else {
+				s.typeCycles = Object.assign({}, DEFAULT_TYPE_CYCLES, s.typeCycles);
+			}
 			s.settingsVersion = SETTINGS_VERSION;
 		},
 
@@ -320,10 +525,22 @@
 			let changed = false;
 			const storedVersion = stored && stored.settingsVersion ? stored.settingsVersion : 1;
 
-			if (storedVersion < SETTINGS_VERSION) {
+			if (storedVersion < 2) {
 				if (!stored || stored.maxSuggestions === undefined || stored.maxSuggestions === 6) {
 					settings.maxSuggestions = DEFAULT_SETTINGS.maxSuggestions;
 				}
+			}
+
+			// v5+: rebuild type cycles from field-type first letters / overrides
+			if (storedVersion < 6) {
+				settings.typeCycles = Object.assign({}, DEFAULT_TYPE_CYCLES);
+				if (!settings.typeCycleModifier) {
+					settings.typeCycleModifier = DEFAULT_SETTINGS.typeCycleModifier;
+				}
+				changed = true;
+			}
+
+			if (storedVersion < SETTINGS_VERSION) {
 				settings.settingsVersion = SETTINGS_VERSION;
 				changed = true;
 			}
@@ -397,6 +614,36 @@
 			});
 		},
 
+		emptyRecentBucket: function() {
+			return { label: [], placeholder: [], instructions: [] };
+		},
+
+		getSiteKey: function() {
+			return (window.location.hostname || 'default').toLowerCase();
+		},
+
+		normalizeRecentStore: function(stored) {
+			if (!stored || typeof stored !== 'object') {
+				return {};
+			}
+
+			if (Array.isArray(stored.label) || Array.isArray(stored.placeholder) || Array.isArray(stored.instructions)) {
+				const migrated = {};
+				migrated[this.getSiteKey()] = Object.assign(this.emptyRecentBucket(), stored);
+				return migrated;
+			}
+
+			return stored;
+		},
+
+		getSiteRecents: function() {
+			const site = this.getSiteKey();
+			if (!this._recentStore[site]) {
+				this._recentStore[site] = this.emptyRecentBucket();
+			}
+			return this._recentStore[site];
+		},
+
 		loadRecentSuggestions: function(callback) {
 			if (!this.settings.enableRecentlyUsed || typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
 				if (callback) callback();
@@ -405,7 +652,7 @@
 
 			chrome.storage.local.get(RECENT_STORAGE_KEY, (result) => {
 				if (!chrome.runtime.lastError && result[RECENT_STORAGE_KEY]) {
-					this._recentCache = Object.assign({ label: [], placeholder: [], instructions: [] }, result[RECENT_STORAGE_KEY]);
+					this._recentStore = this.normalizeRecentStore(result[RECENT_STORAGE_KEY]);
 				}
 				if (callback) callback();
 			});
@@ -417,46 +664,77 @@
 			const trimmed = value.trim();
 			if (!trimmed) return;
 
-			if (!this._recentCache[type]) {
-				this._recentCache[type] = [];
+			const recents = this.getSiteRecents();
+			if (!recents[type]) {
+				recents[type] = [];
 			}
 
-			this._recentCache[type] = [trimmed].concat(
-				this._recentCache[type].filter(item => item.toLowerCase() !== trimmed.toLowerCase())
+			recents[type] = [trimmed].concat(
+				recents[type].filter(item => item.toLowerCase() !== trimmed.toLowerCase())
 			).slice(0, 5);
 
 			if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
 				const payload = {};
-				payload[RECENT_STORAGE_KEY] = this._recentCache;
+				payload[RECENT_STORAGE_KEY] = this._recentStore;
 				chrome.storage.local.set(payload);
 			}
 		},
 
-		mergeRecentSuggestions: function(suggestions, type) {
-			if (!this.settings.enableRecentlyUsed || !this._recentCache[type] || !this._recentCache[type].length) {
-				return suggestions;
-			}
-
-			const merged = [];
+		/**
+		 * Order: type defaults → optional smart/context tail → recent tail.
+		 * Tails are reserved so defaults stay primary when the max is tight.
+		 *
+		 * @param {Array<string>} suggestions
+		 * @param {string} type - Recent bucket key (label|placeholder|instructions)
+		 * @param {number} maxCount
+		 * @param {{ extraTail?: Array<string>, extraTailMax?: number }} [options]
+		 * @returns {Array<string>}
+		 */
+		mergeRecentSuggestions: function(suggestions, type, maxCount, options) {
+			const opts = options || {};
+			const defaults = [];
 			const seen = new Set();
 
-			this._recentCache[type].slice(0, 2).forEach(item => {
-				const norm = item.trim();
+			(suggestions || []).forEach((item) => {
+				const norm = (item || '').trim();
 				if (norm && !seen.has(norm.toLowerCase())) {
 					seen.add(norm.toLowerCase());
-					merged.push(norm);
+					defaults.push(norm);
 				}
 			});
 
-			suggestions.forEach(item => {
-				const norm = item.trim();
+			const smartTail = [];
+			const smartMax = Math.max(0, parseInt(opts.extraTailMax, 10) || 2);
+			(opts.extraTail || []).forEach((item) => {
+				if (smartTail.length >= smartMax) return;
+				const norm = (item || '').trim();
 				if (norm && !seen.has(norm.toLowerCase())) {
 					seen.add(norm.toLowerCase());
-					merged.push(norm);
+					smartTail.push(norm);
 				}
 			});
 
-			return merged;
+			const recentTail = [];
+			const recents = this.getSiteRecents();
+
+			if (this.settings.enableRecentlyUsed && recents[type] && recents[type].length) {
+				recents[type].slice(0, 2).forEach((item) => {
+					const norm = (item || '').trim();
+					if (norm && !seen.has(norm.toLowerCase())) {
+						seen.add(norm.toLowerCase());
+						recentTail.push(norm);
+					}
+				});
+			}
+
+			const tail = smartTail.concat(recentTail);
+
+			if (!maxCount) {
+				return defaults.concat(tail);
+			}
+
+			const defaultTake = Math.max(0, maxCount - tail.length);
+			return defaults.slice(0, defaultTake).concat(tail);
 		},
 
 		setupMessageListener: function() {
@@ -472,6 +750,11 @@
 					sendResponse({ ok: true });
 				}
 
+				if (message.action === 'quick-add-field') {
+					this.openTypeCyclePanel();
+					sendResponse({ ok: true });
+				}
+
 				if (message.action === 'settings-updated') {
 					this.loadSettings(() => {
 						this.normalizeSettings();
@@ -481,6 +764,214 @@
 					return true;
 				}
 			});
+		},
+
+		setupTypeCycleShortcuts: function() {
+			if (this._typeCycleKeysBound) return;
+			this._typeCycleKeysBound = true;
+
+			window.addEventListener('message', (event) => {
+				if (event.source !== window || !event.data || event.data.source !== 'acf-fa-bridge') return;
+				if (event.data.action !== 'cycle-field-type') return;
+
+				if (event.data.ok && event.data.type) {
+					this.showTypeCycleToast(event.data.type);
+					setTimeout(() => this.scanAndInit(), 250);
+				} else if (event.data.error === 'no-field') {
+					this.showTypeCycleToast('Open a field first (Add Field)', true);
+				}
+			});
+
+			document.addEventListener('keydown', (e) => {
+				if (!this.isFieldGroupEditorPage()) return;
+				if (!this.settings.enableKeyboardShortcuts) return;
+
+				const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+				const typing = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable);
+
+				if (this._cyclePanelOpen) {
+					if (e.key === 'Escape') {
+						e.preventDefault();
+						this.closeTypeCyclePanel();
+					}
+					return;
+				}
+
+				// Alt+Shift+A → shortcut settings panel
+				if (e.altKey && e.shiftKey && !e.ctrlKey && !e.metaKey && (e.key === 'a' || e.key === 'A')) {
+					e.preventDefault();
+					this.openTypeCyclePanel();
+					return;
+				}
+
+				if (typing && tag !== 'select') return;
+
+				const letter = (e.key || '').toLowerCase();
+				if (letter.length !== 1 || !/[a-z]/.test(letter)) return;
+
+				const modifier = this.settings.typeCycleModifier || 'alt';
+				const usingAlt = modifier === 'alt' && e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey;
+				const usingCtrlShift = modifier === 'ctrlShift' && e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey;
+				const usingShift = modifier === 'shift' && e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey;
+
+				if (!usingAlt && !usingCtrlShift && !usingShift) return;
+
+				const types = this.getTypeCycleForLetter(letter);
+				if (!types.length) return;
+
+				e.preventDefault();
+				e.stopPropagation();
+				this.cycleFieldType(types);
+			}, true);
+		},
+
+		getTypeCycleForLetter: function(letter) {
+			const maps = this.settings.typeCycles || DEFAULT_TYPE_CYCLES;
+			const list = maps[letter];
+			return Array.isArray(list) ? list.filter(Boolean) : [];
+		},
+
+		cycleFieldType: function(types) {
+			window.postMessage({
+				source: 'acf-fa',
+				action: 'cycle-field-type',
+				types: types
+			}, '*');
+		},
+
+		showTypeCycleToast: function(typeOrMessage, isError) {
+			let toast = document.querySelector('.acf-fa-cycle-toast');
+			if (!toast) {
+				toast = document.createElement('div');
+				toast.className = 'acf-fa-cycle-toast';
+				document.body.appendChild(toast);
+			}
+
+			const label = TYPE_LABELS[typeOrMessage] || typeOrMessage;
+			toast.textContent = isError ? typeOrMessage : ('Field Type: ' + label);
+			toast.classList.toggle('acf-fa-cycle-toast--error', !!isError);
+			toast.classList.add('acf-fa-cycle-toast--show');
+
+			clearTimeout(this._cycleToastTimer);
+			this._cycleToastTimer = setTimeout(() => {
+				toast.classList.remove('acf-fa-cycle-toast--show');
+			}, 1400);
+		},
+
+		openTypeCyclePanel: function() {
+			if (!this.isFieldGroupEditorPage()) return;
+
+			let root = document.querySelector('.acf-fa-cycle-panel');
+			if (!root) {
+				root = document.createElement('div');
+				root.className = 'acf-fa-cycle-panel';
+				root.innerHTML = `
+					<div class="acf-fa-cycle-panel__backdrop" data-acf-fa-close="1"></div>
+					<div class="acf-fa-cycle-panel__card" role="dialog" aria-modal="true" aria-label="Field type cycle shortcuts">
+						<div class="acf-fa-cycle-panel__header">
+							<strong>Type Cycle Shortcuts</strong>
+							<span>Default key = first letter of field type. Add Field → Alt+Letter → cycle.</span>
+						</div>
+						<div class="acf-fa-cycle-panel__note">
+							Chrome blocks <kbd>Ctrl+T</kbd> / <kbd>Ctrl+R</kbd> (browser tabs). Use <kbd>Alt+Letter</kbd>, <kbd>Shift+Letter</kbd>, or <kbd>Ctrl+Shift+Letter</kbd>. Shortcuts are ignored while typing in inputs.
+						</div>
+						<label class="acf-fa-cycle-panel__modifier">
+							<span>Modifier key</span>
+							<select id="acf-fa-cycle-modifier">
+								<option value="alt">Alt + Letter (recommended)</option>
+								<option value="shift">Shift + Letter</option>
+								<option value="ctrlShift">Ctrl + Shift + Letter</option>
+							</select>
+						</label>
+						<div class="acf-fa-cycle-panel__list" id="acf-fa-cycle-list"></div>
+						<div class="acf-fa-cycle-panel__actions">
+							<button type="button" class="acf-fa-cycle-panel__btn acf-fa-cycle-panel__btn--primary" id="acf-fa-cycle-save">Save shortcuts</button>
+							<button type="button" class="acf-fa-cycle-panel__btn" id="acf-fa-cycle-reset">Reset defaults</button>
+							<button type="button" class="acf-fa-cycle-panel__btn" data-acf-fa-close="1">Close</button>
+						</div>
+					</div>
+				`;
+				document.body.appendChild(root);
+
+				root.addEventListener('click', (e) => {
+					if (e.target && e.target.getAttribute('data-acf-fa-close') === '1') {
+						this.closeTypeCyclePanel();
+					}
+				});
+
+				root.querySelector('#acf-fa-cycle-save').addEventListener('click', () => {
+					this.saveTypeCyclePanel();
+				});
+
+				root.querySelector('#acf-fa-cycle-reset').addEventListener('click', () => {
+					this.settings.typeCycles = Object.assign({}, DEFAULT_TYPE_CYCLES);
+					this.settings.typeCycleModifier = 'alt';
+					this.renderTypeCyclePanelRows();
+					const mod = document.getElementById('acf-fa-cycle-modifier');
+					if (mod) mod.value = 'alt';
+				});
+			}
+
+			this._cyclePanelOpen = true;
+			root.classList.add('acf-fa-cycle-panel--open');
+
+			const mod = document.getElementById('acf-fa-cycle-modifier');
+			if (mod) mod.value = this.settings.typeCycleModifier || 'alt';
+
+			this.renderTypeCyclePanelRows();
+		},
+
+		closeTypeCyclePanel: function() {
+			this._cyclePanelOpen = false;
+			const root = document.querySelector('.acf-fa-cycle-panel');
+			if (root) root.classList.remove('acf-fa-cycle-panel--open');
+		},
+
+		renderTypeCyclePanelRows: function() {
+			const list = document.getElementById('acf-fa-cycle-list');
+			if (!list) return;
+
+			const cycles = this.settings.typeCycles || DEFAULT_TYPE_CYCLES;
+			const letters = Object.keys(cycles).sort();
+
+			list.innerHTML = letters.map((letter) => {
+				const value = (cycles[letter] || []).join(', ');
+				return `
+					<label class="acf-fa-cycle-panel__row">
+						<span class="acf-fa-cycle-panel__letter">${letter.toUpperCase()}</span>
+						<input type="text" data-letter="${letter}" value="${value.replace(/"/g, '&quot;')}" placeholder="text, textarea, true_false" />
+					</label>
+				`;
+			}).join('');
+		},
+
+		saveTypeCyclePanel: function() {
+			const mod = document.getElementById('acf-fa-cycle-modifier');
+			const nextCycles = {};
+
+			document.querySelectorAll('#acf-fa-cycle-list input[data-letter]').forEach((input) => {
+				const letter = input.getAttribute('data-letter');
+				const types = String(input.value || '')
+					.split(',')
+					.map((part) => part.trim().toLowerCase().replace(/\s+/g, '_'))
+					.filter(Boolean);
+				if (letter && types.length) {
+					nextCycles[letter] = types;
+				}
+			});
+
+			this.settings.typeCycleModifier = mod ? mod.value : 'alt';
+			this.settings.typeCycles = Object.assign({}, DEFAULT_TYPE_CYCLES, nextCycles);
+			this.settings.settingsVersion = SETTINGS_VERSION;
+
+			if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+				const payload = {};
+				payload[SETTINGS_STORAGE_KEY] = this.settings;
+				chrome.storage.sync.set(payload);
+			}
+
+			this.showTypeCycleToast('Shortcuts saved');
+			this.closeTypeCyclePanel();
 		},
 
 		setupStorageListener: function() {
@@ -496,10 +987,7 @@
 				}
 
 				if (area === 'local' && changes[RECENT_STORAGE_KEY]) {
-					this._recentCache = Object.assign(
-						{ label: [], placeholder: [], instructions: [] },
-						changes[RECENT_STORAGE_KEY].newValue || {}
-					);
+					this._recentStore = this.normalizeRecentStore(changes[RECENT_STORAGE_KEY].newValue);
 				}
 			});
 		},
@@ -578,20 +1066,105 @@
 
 		isAcfFieldGroupLabelInput: function(input) {
 			if (!input || input.tagName !== 'INPUT') return false;
-			return !!input.closest('.acf-field-object, .acf-field[data-name="label"], .acf-field-setting-label');
+			return !!input.closest('.acf-field-object, .acf-field-setting-label, #acf-field-group-fields');
 		},
 
 		setInputValue: function(input, value) {
 			if (!input) return;
-			input.value = value || '';
+
+			const nextValue = value || '';
+			const proto = input.tagName === 'TEXTAREA'
+				? Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value')
+				: Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value');
+
+			if (proto && proto.set) {
+				proto.set.call(input, nextValue);
+			} else {
+				input.value = nextValue;
+			}
+
+			this.dispatchAcfInputEvents(input);
+			this.syncAcfFieldHeader(input);
+		},
+
+		dispatchAcfInputEvents: function(input) {
+			if (!input) return;
+
+			const keyOpts = {
+				bubbles: true,
+				cancelable: true,
+				key: 'Unidentified',
+				code: '',
+				keyCode: 0,
+				which: 0
+			};
+
 			input.dispatchEvent(new Event('input', { bubbles: true }));
+			input.dispatchEvent(new KeyboardEvent('keydown', keyOpts));
+			input.dispatchEvent(new KeyboardEvent('keyup', keyOpts));
 			input.dispatchEvent(new Event('change', { bubbles: true }));
+			input.dispatchEvent(new Event('blur', { bubbles: true }));
+		},
+
+		getFieldObjectHandle: function(fieldObject) {
+			if (!fieldObject) return null;
+			return fieldObject.querySelector(':scope > .handle') ||
+				fieldObject.querySelector(':scope > .acf-field-object-handle') ||
+				fieldObject.querySelector('.handle');
+		},
+
+		syncAcfFieldHeader: function(input) {
+			const fieldObject = input && input.closest('.acf-field-object');
+			if (!fieldObject) return;
+
+			const handle = this.getFieldObjectHandle(fieldObject);
+			if (!handle) return;
+
+			if (this.isLabelInput(input)) {
+				const labelTarget = handle.querySelector('.li-field-label strong a.edit-field') ||
+					handle.querySelector('.li-field-label strong a') ||
+					handle.querySelector('.li-field-label strong') ||
+					handle.querySelector('.li-field-label');
+
+				if (labelTarget) {
+					const rowOptions = labelTarget.querySelector && labelTarget.querySelector('.row-options');
+					if (rowOptions) {
+						const textNode = Array.from(labelTarget.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+						if (textNode) {
+							textNode.textContent = input.value;
+						}
+					} else {
+						labelTarget.textContent = input.value;
+					}
+				}
+
+				fieldObject.setAttribute('data-label', input.value);
+			}
+
+			if (this.isNameInput(input)) {
+				const nameLi = handle.querySelector('.li-field-name');
+				if (nameLi) {
+					const nameTarget = nameLi.querySelector('.copyable, .copy-field-name, span');
+					if (nameTarget) {
+						nameTarget.textContent = input.value;
+					} else {
+						nameLi.textContent = input.value;
+					}
+				}
+
+				fieldObject.setAttribute('data-name', input.value);
+			}
 		},
 
 		/**
 		 * Scans the DOM for placeholder and label inputs and injects suggestions.
 		 */
 		scanAndInit: function() {
+			if (!this.isFieldGroupEditorPage()) {
+				this.removeInjectedUi();
+				return;
+			}
+
 			if (this.settings.enablePlaceholderSuggestions) {
 				document.querySelectorAll(
 					'.acf-field[data-name="placeholder"] input, ' +
@@ -659,11 +1232,11 @@
 				}
 
 				if (self.isPlaceholderInput(target)) {
-					self.injectSuggestions(target);
+					self.updateActivePills(self.getSuggestionsWrapper(target, false), target.value);
 				}
 
 				if (self.isInstructionsInput(target)) {
-					self.injectInstructionsSuggestions(target);
+					self.updateActivePills(self.getSuggestionsWrapper(target, false), target.value);
 				}
 			};
 
@@ -679,49 +1252,53 @@
 				}
 			}, true);
 
-			// Listen to changes in Field Type selects
+			// Rebuild type-based pills when Field Type changes (capture — Select2/jQuery safe)
 			document.body.addEventListener('change', (e) => {
 				const target = e.target;
 				if (!target || target.tagName !== 'SELECT') return;
 
-				const isType = target.name && (target.name.includes('[type]') || target.closest('.acf-field[data-name="type"]'));
+				const isType = (target.name && target.name.includes('[type]')) ||
+					!!target.closest('.acf-field[data-name="type"], .acf-field-setting-type');
 
 				if (isType) {
-					const fieldObject = target.closest('.acf-field-object') || 
-					                    target.closest('.acf-field-setting') || 
-					                    target.closest('tbody') || 
-					                    target.closest('.acf-fields') || 
-					                    target.parentNode.parentNode;
+					const fieldObject = target.closest('.acf-field-object');
 					if (fieldObject) {
-						setTimeout(() => {
-							const labelInput = self.findFieldSettingInput(fieldObject, 'label');
-							if (labelInput && self.settings.enableLabelSuggestions) {
-								self.injectLabelSuggestions(labelInput);
-							}
-
-							const instructionsInput = self.findFieldSettingInput(fieldObject, 'instructions');
-							if (instructionsInput && self.settings.enableInstructionsSuggestions) {
-								self.injectInstructionsSuggestions(instructionsInput);
-							}
-
-							self.refreshPlaceholderSuggestions(
-								fieldObject,
-								labelInput ? labelInput.value : undefined,
-								labelInput
-							);
-
-							if (self.settings.enableRecommendedSetup) {
-								self.injectApplySetupButton(fieldObject);
-							}
-						}, 100);
+						self.scheduleFieldTypeSuggestionRefresh(fieldObject);
 					}
+				}
+			}, true);
+
+			// Bridge (MAIN world) notifies when ACF/jQuery changes field type
+			window.addEventListener('message', (event) => {
+				if (event.source !== window || !event.data || event.data.source !== 'acf-fa-bridge') return;
+				if (event.data.action !== 'field-type-changed') return;
+
+				const fieldObject = self.findFieldObjectByKey(event.data.fieldKey) ||
+					document.querySelector('.acf-field-object.open, .acf-field-object.acf-open');
+				if (fieldObject) {
+					self.scheduleFieldTypeSuggestionRefresh(fieldObject);
 				}
 			});
 
-			// Tab switches, accordion toggles, field row expand
-			document.body.addEventListener('click', () => {
-				setTimeout(() => self.scanAndInit(), 100);
-			});
+			// Fallback: ACF updates data-type on the field object
+			if (!this._typeAttrObserver) {
+				this._typeAttrObserver = new MutationObserver((mutations) => {
+					mutations.forEach((mutation) => {
+						if (mutation.type !== 'attributes' || mutation.attributeName !== 'data-type') return;
+						const fieldObject = mutation.target;
+						if (!fieldObject || !fieldObject.classList || !fieldObject.classList.contains('acf-field-object')) {
+							return;
+						}
+						self.scheduleFieldTypeSuggestionRefresh(fieldObject);
+					});
+				});
+
+				this._typeAttrObserver.observe(document.body, {
+					attributes: true,
+					attributeFilter: ['data-type'],
+					subtree: true
+				});
+			}
 
 			document.body.addEventListener('focusin', (e) => {
 				const target = e.target;
@@ -767,34 +1344,37 @@
 
 			acf.addAction('ready', rescan);
 			acf.addAction('append', rescan);
-			acf.addAction('show_field', rescan);
 			acf.addAction('prepare_field_object', rescan);
-			acf.addAction('remove_field_object', rescan);
+			acf.addAction('change_field_type', (field) => {
+				const el = field && field.$el ? field.$el[0] : field;
+				const fieldObject = el && el.closest ? el.closest('.acf-field-object') : el;
+				setTimeout(() => this.refreshSuggestionsForFieldType(fieldObject), 100);
+			});
 		},
 
 		isLabelInput: function(el) {
-			return !!el && el.tagName === 'INPUT' && (
+			return !!el && el.tagName === 'INPUT' && !!el.closest('.acf-field-object, .acf-field-setting-label, #acf-field-group-fields') && (
 				(el.name && el.name.includes('[label]')) ||
 				!!el.closest('.acf-field[data-name="label"], .acf-field-setting-label')
 			);
 		},
 
 		isNameInput: function(el) {
-			return !!el && el.tagName === 'INPUT' && (
+			return !!el && el.tagName === 'INPUT' && !!el.closest('.acf-field-object, .acf-field-setting-name, #acf-field-group-fields') && (
 				(el.name && el.name.includes('[name]')) ||
 				!!el.closest('.acf-field[data-name="name"], .acf-field-setting-name')
 			);
 		},
 
 		isPlaceholderInput: function(el) {
-			return !!el && el.tagName === 'INPUT' && (
+			return !!el && el.tagName === 'INPUT' && !!el.closest('.acf-field-object, .acf-field-setting-placeholder, #acf-field-group-fields') && (
 				(el.name && el.name.includes('[placeholder]')) ||
 				!!el.closest('.acf-field[data-name="placeholder"], .acf-field-setting-placeholder')
 			);
 		},
 
 		isInstructionsInput: function(el) {
-			return !!el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && (
+			return !!el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && !!el.closest('.acf-field-object, .acf-field-setting-instructions, #acf-field-group-fields') && (
 				(el.name && el.name.includes('[instructions]')) ||
 				!!el.closest('.acf-field[data-name="instructions"], .acf-field-setting-instructions')
 			);
@@ -840,32 +1420,27 @@
 				let shouldScan = false;
 
 				for (const mutation of mutations) {
-					if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-						const node = mutation.target;
-						if (node.nodeType === Node.ELEMENT_NODE && node.classList && node.classList.contains('acf-field-object')) {
+					if (mutation.addedNodes.length === 0) continue;
+
+					for (const node of mutation.addedNodes) {
+						if (node.nodeType !== Node.ELEMENT_NODE) continue;
+						if (node.closest && node.closest('.acf-fa-suggestions-wrapper')) continue;
+						if (node.classList && node.classList.contains('acf-fa-suggestions-wrapper')) continue;
+
+						if (
+							(node.classList && node.classList.contains('acf-field-object')) ||
+							(node.querySelector && node.querySelector('.acf-field-object')) ||
+							(node.querySelector && (
+								node.querySelector('input[name*="[placeholder]"]') ||
+								node.querySelector('.acf-field[data-name="placeholder"]') ||
+								node.querySelector('input[name*="[label]"]') ||
+								node.querySelector('.acf-field[data-name="label"]') ||
+								node.querySelector('textarea[name*="[instructions]"]') ||
+								node.querySelector('.acf-field[data-name="instructions"]')
+							))
+						) {
 							shouldScan = true;
 							break;
-						}
-					}
-
-					if (mutation.addedNodes.length > 0) {
-						for (const node of mutation.addedNodes) {
-							if (node.nodeType === Node.ELEMENT_NODE) {
-								if (
-									node.classList.contains('acf-field-object') ||
-									node.classList.contains('acf-field') ||
-									node.querySelector('.acf-field-object') ||
-									node.querySelector('input[name*="[placeholder]"]') ||
-									node.querySelector('.acf-field[data-name="placeholder"]') ||
-									node.querySelector('input[name*="[label]"]') ||
-									node.querySelector('.acf-field[data-name="label"]') ||
-									node.querySelector('textarea[name*="[instructions]"]') ||
-									node.querySelector('.acf-field[data-name="instructions"]')
-								) {
-									shouldScan = true;
-									break;
-								}
-							}
 						}
 					}
 
@@ -879,9 +1454,7 @@
 
 			observer.observe(document.body, {
 				childList: true,
-				subtree: true,
-				attributes: true,
-				attributeFilter: ['class']
+				subtree: true
 			});
 		},
 
@@ -961,14 +1534,129 @@
 		},
 
 		handleLabelOrNameChange: function(target) {
+			if (this._syncingNameFromLabel && this.isNameInput(target)) {
+				return;
+			}
+
 			const fieldObject = this.getFieldObject(target);
 			const labelOverride = this.isLabelInput(target) ? target.value : undefined;
 
 			if (this.isLabelInput(target)) {
-				this.injectLabelSuggestions(target);
+				const wrapper = this.getSuggestionsWrapper(target, false);
+				this.updateActivePills(wrapper, target.value);
+				this.queueNestedLabelRefresh(fieldObject);
 			}
 
 			this.refreshPlaceholderSuggestions(fieldObject, labelOverride, target);
+		},
+
+		queueNestedLabelRefresh: function(fieldObject) {
+			if (!fieldObject) return;
+
+			if (fieldObject._acfFaChildTimer) {
+				clearTimeout(fieldObject._acfFaChildTimer);
+			}
+
+			fieldObject._acfFaChildTimer = setTimeout(() => {
+				fieldObject.querySelectorAll('.acf-field-object').forEach((child) => {
+					const childLabel = this.findFieldSettingInput(child, 'label');
+					if (childLabel && this.settings.enableLabelSuggestions) {
+						this.injectLabelSuggestions(childLabel, true);
+					}
+				});
+			}, 350);
+		},
+
+		findFieldObjectByKey: function(fieldKey) {
+			if (!fieldKey || fieldKey === 'acfcloneindex') return null;
+			return document.querySelector(
+				`.acf-field-object[data-key="${fieldKey}"], .acf-field-object[data-id="${fieldKey}"]`
+			);
+		},
+
+		scheduleFieldTypeSuggestionRefresh: function(fieldObject) {
+			if (!fieldObject) return;
+
+			const key = fieldObject.getAttribute('data-key') ||
+				fieldObject.getAttribute('data-id') ||
+				'anon';
+
+			if (!this._typeRefreshTimers) {
+				this._typeRefreshTimers = {};
+			}
+
+			if (this._typeRefreshTimers[key]) {
+				clearTimeout(this._typeRefreshTimers[key]);
+			}
+
+			// ACF rewrites settings DOM after type change — refresh twice
+			this._typeRefreshTimers[key] = setTimeout(() => {
+				this.refreshSuggestionsForFieldType(fieldObject);
+				setTimeout(() => this.refreshSuggestionsForFieldType(fieldObject), 200);
+			}, 80);
+		},
+
+		refreshSuggestionsForFieldType: function(fieldObject) {
+			if (!fieldObject || !fieldObject.isConnected) return;
+
+			const labelInput = this.findFieldSettingInput(fieldObject, 'label');
+			if (labelInput && this.settings.enableLabelSuggestions) {
+				const wrapper = this.getSuggestionsWrapper(labelInput, false);
+				if (wrapper) {
+					delete wrapper.dataset.acfFaType;
+					delete wrapper.dataset.acfFaSig;
+				}
+				this.injectLabelSuggestions(labelInput, true);
+			}
+
+			const instructionsInput = this.findFieldSettingInput(fieldObject, 'instructions');
+			if (instructionsInput && this.settings.enableInstructionsSuggestions) {
+				this.injectInstructionsSuggestions(instructionsInput, true);
+			}
+
+			this.refreshPlaceholderSuggestions(
+				fieldObject,
+				labelInput ? labelInput.value : undefined,
+				labelInput
+			);
+
+			if (this.settings.enableRecommendedSetup) {
+				this.injectApplySetupButton(fieldObject, labelInput);
+			}
+		},
+
+		syncFieldNameFromLabel: function(labelInput, labelValue) {
+			const slug = this.slugify(labelValue);
+			if (!slug || !labelInput) return;
+
+			const applyName = () => {
+				const fieldKey = this.getFieldKeyFromInput(labelInput);
+				const fieldObject = this.getFieldObject(labelInput);
+				let nameInput = fieldKey ? this.findSettingInputByFieldKey(fieldKey, 'name') : null;
+
+				if (fieldObject) {
+					nameInput = nameInput || this.findFieldSettingInput(fieldObject, 'name');
+				}
+
+				if (nameInput) {
+					this.setInputValue(nameInput, slug);
+				}
+			};
+
+			this._syncingNameFromLabel = true;
+			applyName();
+			setTimeout(() => {
+				applyName();
+				this._syncingNameFromLabel = false;
+			}, 150);
+		},
+
+		updateActivePills: function(wrapper, currentValue) {
+			if (!wrapper) return;
+
+			wrapper.querySelectorAll('.acf-fa-suggestion-pill:not(.acf-fa-apply-setup-btn)').forEach((pill) => {
+				pill.classList.toggle('acf-fa-suggestion-pill--active', pill.textContent === currentValue);
+			});
 		},
 
 		/**
@@ -1031,14 +1719,9 @@
 			const lowerLabel = cleanLabel.toLowerCase();
 			const lowerName = cleanName.toLowerCase();
 
-			// Rule 1: Label-first suggestions (primary behavior)
+			// Rule 1: Label-first suggestions (tone from settings)
 			if (cleanLabel.length > 0) {
-				suggestions.push(
-					`Enter your ${lowerLabel}`,
-					`Write your ${lowerLabel}`,
-					`Add a ${lowerLabel}`,
-					`Type your ${lowerLabel}`
-				);
+				suggestions.push.apply(suggestions, this.buildLabelPlaceholders(cleanLabel));
 			}
 
 			const hasKeyword = (keyword) => {
@@ -1114,7 +1797,7 @@
 				}
 			}
 
-			return this.mergeRecentSuggestions(finalSuggestions, 'placeholder').slice(0, 4);
+			return this.mergeRecentSuggestions(finalSuggestions, 'placeholder', 4);
 		},
 
 		/**
@@ -1139,25 +1822,225 @@
 			if (wrapper) wrapper.remove();
 		},
 
+		buildLabelPlaceholders: function(label) {
+			const raw = (label || '').trim();
+			if (!raw) return [];
+
+			const lower = raw.toLowerCase();
+			const titled = raw.charAt(0).toUpperCase() + raw.slice(1);
+			const tone = this.settings.placeholderTone || DEFAULT_SETTINGS.placeholderTone;
+
+			if (tone === 'ellipsis') {
+				return [`${titled}...`, `Your ${lower}...`, `Add ${lower}...`];
+			}
+
+			if (tone === 'short') {
+				return [titled, `Your ${lower}`, `${titled} here`];
+			}
+
+			return [
+				`Enter your ${lower}`,
+				`Write your ${lower}`,
+				`Add a ${lower}`,
+				`Type your ${lower}`
+			];
+		},
+
+		getParentFieldContext: function(input) {
+			const fieldObject = this.getFieldObject(input);
+			if (!fieldObject || !fieldObject.parentElement) return null;
+
+			const parent = fieldObject.parentElement.closest('.acf-field-object');
+			if (!parent || parent === fieldObject) return null;
+
+			const parentLabel = this.findFieldSettingInput(parent, 'label');
+			const parentName = this.findFieldSettingInput(parent, 'name');
+			const parentType = this.findFieldSettingInput(parent, 'type');
+
+			return {
+				label: parentLabel ? parentLabel.value : '',
+				name: parentName ? parentName.value : '',
+				type: parentType ? this.normalizeFieldType(parentType.value) : ''
+			};
+		},
+
+		getParentContextKey: function(input) {
+			const parent = this.getParentFieldContext(input);
+			if (!parent) return '';
+			return this.slugify((parent.label || '') + ' ' + (parent.name || '') + ' ' + (parent.type || ''));
+		},
+
+		getContextChildLabels: function(parentText) {
+			const haystack = (parentText || '').toLowerCase();
+			if (!haystack) return [];
+
+			for (const group of REPEATER_CHILD_LABELS) {
+				if (group.match.some((keyword) => haystack.includes(keyword))) {
+					return group.labels.slice();
+				}
+			}
+
+			return [];
+		},
+
 		/**
-		 * Generates field label suggestions based on the active field type.
+		 * Matches casing of a replacement word to a sample word.
+		 *
+		 * @param {string} sample
+		 * @param {string} next
+		 * @returns {string}
+		 */
+		matchWordCase: function(sample, next) {
+			if (!sample || !next) return next || '';
+			if (sample === sample.toUpperCase()) return next.toUpperCase();
+			if (sample[0] === sample[0].toUpperCase()) {
+				return next.charAt(0).toUpperCase() + next.slice(1);
+			}
+			return next.toLowerCase();
+		},
+
+		/**
+		 * Singularizes a single English word (best-effort for field labels).
+		 *
+		 * @param {string} word
+		 * @returns {string}
+		 */
+		singularizeWord: function(word) {
+			const raw = (word || '').trim();
+			if (!raw) return '';
+
+			const lower = raw.toLowerCase();
+			const irregular = {
+				people: 'person',
+				men: 'man',
+				women: 'woman',
+				children: 'child',
+				faqs: 'faq',
+				feet: 'foot',
+				teeth: 'tooth',
+				media: 'media',
+				data: 'data',
+				series: 'series',
+				news: 'news'
+			};
+
+			if (irregular[lower]) {
+				return this.matchWordCase(raw, irregular[lower]);
+			}
+
+			if (lower.endsWith('ies') && lower.length > 4) {
+				return this.matchWordCase(raw, lower.slice(0, -3) + 'y');
+			}
+
+			if (/(ses|xes|zes|ches|shes)$/.test(lower) && lower.length > 4) {
+				return this.matchWordCase(raw, lower.slice(0, -2));
+			}
+
+			if (lower.endsWith('ves') && lower.length > 4) {
+				return this.matchWordCase(raw, lower.slice(0, -3) + 'f');
+			}
+
+			if (
+				lower.endsWith('s') &&
+				!lower.endsWith('ss') &&
+				!lower.endsWith('us') &&
+				!lower.endsWith('is') &&
+				lower.length > 2
+			) {
+				return this.matchWordCase(raw, lower.slice(0, -1));
+			}
+
+			return raw;
+		},
+
+		/**
+		 * Singularizes a multi-word field label. Already-singular labels stay the same.
+		 * e.g. "Team Members" → "Team Member", "Feature" → "Feature"
+		 *
+		 * @param {string} label
+		 * @returns {string}
+		 */
+		singularizeLabel: function(label) {
+			const trimmed = (label || '').trim().replace(/\s+/g, ' ');
+			if (!trimmed) return '';
+
+			const words = trimmed.split(' ');
+			words[words.length - 1] = this.singularizeWord(words[words.length - 1]);
+			return words.join(' ');
+		},
+
+		/**
+		 * Accordion labels from parent repeater / group (singular parent text).
+		 *
+		 * @param {{ label?: string, name?: string, type?: string }|null} parent
+		 * @returns {Array<string>}
+		 */
+		getAccordionParentLabels: function(parent) {
+			if (!parent || !['repeater', 'group', 'flexible_content'].includes(parent.type)) {
+				return [];
+			}
+
+			let source = (parent.label || '').trim();
+			if (!source && parent.name) {
+				source = parent.name
+					.replace(/[-_]+/g, ' ')
+					.replace(/\s+/g, ' ')
+					.trim()
+					.replace(/\b\w/g, (ch) => ch.toUpperCase());
+			}
+
+			if (!source) return [];
+
+			const singular = this.singularizeLabel(source);
+			if (!singular) return [];
+
+			return [singular];
+		},
+
+		/**
+		 * Generates field label suggestions based on the active field type
+		 * and parent repeater / flexible / group context.
 		 *
 		 * @param {string} type - The active field type.
+		 * @param {HTMLInputElement} [labelInput]
 		 * @returns {Array} List of string label suggestions.
 		 */
-		generateLabelSuggestions: function(type) {
+		generateLabelSuggestions: function(type, labelInput) {
 			const cleanType = this.normalizeFieldType(type);
-			const suggestions = FIELD_LABEL_SUGGESTIONS[cleanType] || FIELD_LABEL_SUGGESTIONS._default;
 			const expandedTypes = ['repeater', 'flexible_content'];
+			let suggestions = FIELD_LABEL_SUGGESTIONS[cleanType] || FIELD_LABEL_SUGGESTIONS._default;
 			const maxCount = expandedTypes.includes(cleanType)
 				? Math.min(10, this.getMaxSuggestions() + 4)
 				: this.getMaxSuggestions();
 
-			const sortedSuggestions = expandedTypes.includes(cleanType)
-				? [...suggestions].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
-				: suggestions;
+			if (expandedTypes.includes(cleanType)) {
+				suggestions = [...suggestions].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+			}
 
-			return this.mergeRecentSuggestions(sortedSuggestions, 'label').slice(0, maxCount);
+			const parent = this.getParentFieldContext(labelInput);
+			let smartTail = [];
+
+			// Accordion inside repeater/group → singular parent label first
+			if (cleanType === 'accordion' && parent) {
+				const accordionFromParent = this.getAccordionParentLabels(parent);
+				if (accordionFromParent.length) {
+					const seen = new Set(accordionFromParent.map((item) => item.toLowerCase()));
+					const defaults = (suggestions || []).filter((item) => {
+						const norm = (item || '').trim();
+						return norm && !seen.has(norm.toLowerCase());
+					});
+					suggestions = accordionFromParent.concat(defaults);
+				}
+			} else if (!expandedTypes.includes(cleanType)) {
+				// Smart repeater/group child labels go at the end — defaults stay first
+				const parentText = parent ? `${parent.label} ${parent.name}` : '';
+				smartTail = this.getContextChildLabels(parentText);
+			}
+
+			return this.mergeRecentSuggestions(suggestions, 'label', maxCount, {
+				extraTail: smartTail,
+				extraTailMax: 2
+			});
 		},
 
 		generateInstructionSuggestions: function(type) {
@@ -1168,7 +2051,7 @@
 			}
 
 			const suggestions = FIELD_INSTRUCTIONS_SUGGESTIONS[cleanType] || [];
-			return this.mergeRecentSuggestions(suggestions, 'instructions').slice(0, this.getMaxSuggestions());
+			return this.mergeRecentSuggestions(suggestions, 'instructions', this.getMaxSuggestions());
 		},
 
 		getMaxSuggestions: function() {
@@ -1185,19 +2068,31 @@
 		 */
 		renderSuggestionPills: function(wrapper, targetInput, suggestionsList, reInjectFn, options) {
 			const opts = options || {};
+			const signature = suggestionsList.join('\u0001');
+
+			if (wrapper.dataset.acfFaSig === signature && wrapper.querySelector('.acf-fa-suggestion-pill')) {
+				this.updateActivePills(wrapper, targetInput.value);
+				return;
+			}
+
 			const preservedSetup = wrapper.querySelector('.acf-fa-apply-setup-btn');
+			const preservedUndo = wrapper.querySelector('.acf-fa-undo-setup-btn');
 			wrapper.innerHTML = '';
+			wrapper.dataset.acfFaSig = signature;
 
 			if (suggestionsList.length === 0) {
 				if (preservedSetup) {
 					wrapper.appendChild(preservedSetup);
+				}
+				if (preservedUndo) {
+					wrapper.appendChild(preservedUndo);
 				}
 				return;
 			}
 
 			const labelSpan = document.createElement('span');
 			labelSpan.className = 'acf-fa-suggestions-label';
-			labelSpan.textContent = opts.recentLabel ? 'Recent & Suggestions:' : 'Suggestions:';
+			labelSpan.textContent = 'Suggestions:';
 			wrapper.appendChild(labelSpan);
 
 			suggestionsList.forEach(sugText => {
@@ -1214,19 +2109,17 @@
 					e.preventDefault();
 					e.stopPropagation();
 
-					targetInput.value = sugText;
-					targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-					targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+					this.setInputValue(targetInput, sugText);
 
 					if (opts.suggestionType) {
 						this.saveRecentSuggestion(opts.suggestionType, sugText);
 					}
 
 					if (typeof opts.onSelect === 'function') {
-						opts.onSelect.call(this, targetInput);
+						opts.onSelect.call(this, targetInput, sugText);
 					}
 
-					reInjectFn.call(this, targetInput);
+					this.updateActivePills(wrapper, sugText);
 				});
 
 				wrapper.appendChild(pill);
@@ -1234,6 +2127,10 @@
 
 			if (preservedSetup) {
 				wrapper.appendChild(preservedSetup);
+			}
+
+			if (preservedUndo) {
+				wrapper.appendChild(preservedUndo);
 			}
 		},
 
@@ -1243,7 +2140,7 @@
 		 * @param {HTMLInputElement} placeholderInput - The target placeholder input element.
 		 */
 		injectSuggestions: function(placeholderInput, contextOverride) {
-			if (!this.settings.enablePlaceholderSuggestions || !placeholderInput) return;
+			if (!this.isFieldGroupEditorPage() || !this.settings.enablePlaceholderSuggestions || !placeholderInput) return;
 
 			const wrapper = this.getSuggestionsWrapper(placeholderInput, true);
 			if (!wrapper) return;
@@ -1273,11 +2170,9 @@
 				: (typeSelect ? typeSelect.value : 'text');
 
 			const suggestionsList = this.generateSuggestions(label, name, type);
-			this.renderSuggestionPills(wrapper, placeholderInput, suggestionsList, () => {
-				this.injectSuggestions(placeholderInput);
-			}, {
+			this.renderSuggestionPills(wrapper, placeholderInput, suggestionsList, null, {
 				suggestionType: 'placeholder',
-				recentLabel: this.settings.enableRecentlyUsed && this._recentCache.placeholder.length > 0
+				recentLabel: this.settings.enableRecentlyUsed && this.getSiteRecents().placeholder.length > 0
 			});
 		},
 
@@ -1286,24 +2181,37 @@
 		 *
 		 * @param {HTMLInputElement} labelInput - The target field label input element.
 		 */
-		injectLabelSuggestions: function(labelInput) {
-			if (!this.settings.enableLabelSuggestions || !labelInput) return;
+		injectLabelSuggestions: function(labelInput, force) {
+			if (!this.isFieldGroupEditorPage() || !this.settings.enableLabelSuggestions || !labelInput) return;
 
 			const wrapper = this.getSuggestionsWrapper(labelInput, true);
 			if (!wrapper) return;
 
 			const type = this.getFieldTypeForInput(labelInput);
-			const suggestionsList = this.generateLabelSuggestions(type);
+			const typeKey = this.normalizeFieldType(type) + '|' + this.getParentContextKey(labelInput);
+
+			if (!force && wrapper.dataset.acfFaType === typeKey && wrapper.querySelector('.acf-fa-suggestion-pill')) {
+				this.updateActivePills(wrapper, labelInput.value);
+				return;
+			}
+
+			if (force) {
+				delete wrapper.dataset.acfFaSig;
+			}
+
+			wrapper.dataset.acfFaType = typeKey;
+			const suggestionsList = this.generateLabelSuggestions(type, labelInput);
 
 			this.renderSuggestionPills(
 				wrapper,
 				labelInput,
 				suggestionsList,
-				() => this.injectLabelSuggestions(labelInput),
+				null,
 				{
 					suggestionType: 'label',
-					recentLabel: this.settings.enableRecentlyUsed && this._recentCache.label.length > 0,
-					onSelect: function(selectedLabelInput) {
+					recentLabel: this.settings.enableRecentlyUsed && this.getSiteRecents().label.length > 0,
+					onSelect: function(selectedLabelInput, sugText) {
+						this.syncFieldNameFromLabel(selectedLabelInput, sugText);
 						this.refreshPlaceholderSuggestions(
 							this.getFieldObject(selectedLabelInput),
 							selectedLabelInput.value,
@@ -1319,8 +2227,8 @@
 			}
 		},
 
-		injectInstructionsSuggestions: function(instructionsInput) {
-			if (!this.settings.enableInstructionsSuggestions || !instructionsInput) return;
+		injectInstructionsSuggestions: function(instructionsInput, force) {
+			if (!this.isFieldGroupEditorPage() || !this.settings.enableInstructionsSuggestions || !instructionsInput) return;
 
 			const type = this.getFieldTypeForInput(instructionsInput);
 
@@ -1332,16 +2240,27 @@
 			const wrapper = this.getSuggestionsWrapper(instructionsInput, true);
 			if (!wrapper) return;
 
+			const typeKey = this.normalizeFieldType(type);
+			if (!force && wrapper.dataset.acfFaType === typeKey && wrapper.querySelector('.acf-fa-suggestion-pill')) {
+				this.updateActivePills(wrapper, instructionsInput.value);
+				return;
+			}
+
+			if (force) {
+				delete wrapper.dataset.acfFaSig;
+			}
+
+			wrapper.dataset.acfFaType = typeKey;
 			const suggestionsList = this.generateInstructionSuggestions(type);
 
 			this.renderSuggestionPills(
 				wrapper,
 				instructionsInput,
 				suggestionsList,
-				() => this.injectInstructionsSuggestions(instructionsInput),
+				null,
 				{
 					suggestionType: 'instructions',
-					recentLabel: this.settings.enableRecentlyUsed && this._recentCache.instructions.length > 0
+					recentLabel: this.settings.enableRecentlyUsed && this.getSiteRecents().instructions.length > 0
 				}
 			);
 		},
@@ -1355,7 +2274,6 @@
 			const inputWrap = labelInputEl.closest('.acf-input') || labelInputEl.parentNode;
 			if (!inputWrap) return;
 
-			// Remove legacy wrapper elements
 			inputWrap.querySelectorAll('.acf-fa-apply-setup-wrapper').forEach((wrapper) => {
 				const btn = wrapper.querySelector('.acf-fa-apply-setup-btn');
 				if (btn) {
@@ -1365,6 +2283,7 @@
 			});
 
 			const suggestionsWrapper = this.getSuggestionsWrapper(labelInputEl, false);
+			const host = suggestionsWrapper || inputWrap;
 			let setupBtn = inputWrap.querySelector('.acf-fa-apply-setup-btn');
 
 			if (!setupBtn) {
@@ -1384,13 +2303,90 @@
 			const cleanType = this.normalizeFieldType(typeSelect ? typeSelect.value : 'text');
 			const hasSetup = !!RECOMMENDED_SETUPS[cleanType];
 
-			if (suggestionsWrapper) {
-				suggestionsWrapper.appendChild(setupBtn);
-			} else {
-				inputWrap.appendChild(setupBtn);
+			host.appendChild(setupBtn);
+			setupBtn.style.display = hasSetup ? 'inline-block' : 'none';
+
+			let undoBtn = inputWrap.querySelector('.acf-fa-undo-setup-btn');
+			if (!undoBtn) {
+				undoBtn = document.createElement('button');
+				undoBtn.type = 'button';
+				undoBtn.className = 'acf-fa-suggestion-pill acf-fa-undo-setup-btn';
+				undoBtn.textContent = 'Undo';
+				undoBtn.title = 'Restore previous field values';
+				undoBtn.style.display = 'none';
+				undoBtn.addEventListener('click', (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					this.undoRecommendedSetup(fieldObject);
+				});
 			}
 
-			setupBtn.style.display = hasSetup ? 'inline-block' : 'none';
+			host.appendChild(undoBtn);
+		},
+
+		snapshotFieldValues: function(fieldObject) {
+			const read = (settingName) => {
+				const input = this.findFieldSettingInput(fieldObject, settingName);
+				return input ? input.value : '';
+			};
+
+			return {
+				label: read('label'),
+				name: read('name'),
+				placeholder: read('placeholder'),
+				instructions: read('instructions')
+			};
+		},
+
+		restoreFieldSnapshot: function(fieldObject, snapshot) {
+			if (!snapshot) return;
+
+			this.setInputValue(this.findFieldSettingInput(fieldObject, 'label'), snapshot.label);
+			this.setInputValue(this.findFieldSettingInput(fieldObject, 'name'), snapshot.name);
+			this.setInputValue(this.findFieldSettingInput(fieldObject, 'placeholder'), snapshot.placeholder);
+			this.setInputValue(this.findFieldSettingInput(fieldObject, 'instructions'), snapshot.instructions);
+		},
+
+		showUndoSetupButton: function(fieldObject) {
+			const labelInput = this.findFieldSettingInput(fieldObject, 'label');
+			if (!labelInput) return;
+
+			const host = this.getSuggestionsWrapper(labelInput, false) ||
+				labelInput.closest('.acf-input') ||
+				labelInput.parentNode;
+			const undoBtn = host && host.querySelector('.acf-fa-undo-setup-btn');
+			if (!undoBtn) return;
+
+			undoBtn.style.display = 'inline-block';
+
+			if (fieldObject._acfFaUndoTimer) {
+				clearTimeout(fieldObject._acfFaUndoTimer);
+			}
+
+			fieldObject._acfFaUndoTimer = setTimeout(() => {
+				undoBtn.style.display = 'none';
+				fieldObject._acfFaUndo = null;
+			}, 12000);
+		},
+
+		hideUndoSetupButton: function(fieldObject) {
+			const labelInput = this.findFieldSettingInput(fieldObject, 'label');
+			if (!labelInput) return;
+
+			const host = this.getSuggestionsWrapper(labelInput, false) ||
+				labelInput.closest('.acf-input') ||
+				labelInput.parentNode;
+			const undoBtn = host && host.querySelector('.acf-fa-undo-setup-btn');
+			if (undoBtn) {
+				undoBtn.style.display = 'none';
+			}
+
+			if (fieldObject._acfFaUndoTimer) {
+				clearTimeout(fieldObject._acfFaUndoTimer);
+				fieldObject._acfFaUndoTimer = null;
+			}
+
+			fieldObject._acfFaUndo = null;
 		},
 
 		applyRecommendedSetup: function(fieldObject) {
@@ -1405,16 +2401,49 @@
 			const placeholderInput = this.findFieldSettingInput(fieldObject, 'placeholder');
 			const instructionsInput = this.findFieldSettingInput(fieldObject, 'instructions');
 
+			fieldObject._acfFaUndo = this.snapshotFieldValues(fieldObject);
+
 			this.setInputValue(labelInput, setup.label);
 			this.setInputValue(nameInput, setup.name || this.slugify(setup.label));
 
-			if (placeholderInput && setup.placeholder) {
-				this.setInputValue(placeholderInput, setup.placeholder);
+			let placeholder = setup.placeholder;
+			if (placeholder && setup.label && /^(enter|write|add|type)\b/i.test(placeholder)) {
+				placeholder = this.buildLabelPlaceholders(setup.label)[0] || placeholder;
+			}
+
+			if (placeholderInput && placeholder) {
+				this.setInputValue(placeholderInput, placeholder);
 			}
 
 			if (instructionsInput && setup.instructions && this.supportsInstructions(cleanType)) {
 				this.setInputValue(instructionsInput, setup.instructions);
 			}
+
+			this.showUndoSetupButton(fieldObject);
+
+			setTimeout(() => {
+				if (labelInput && this.settings.enableLabelSuggestions) {
+					this.injectLabelSuggestions(labelInput);
+				}
+				if (placeholderInput && this.settings.enablePlaceholderSuggestions) {
+					this.injectSuggestions(placeholderInput);
+				}
+				if (instructionsInput && this.settings.enableInstructionsSuggestions) {
+					this.injectInstructionsSuggestions(instructionsInput);
+				}
+			}, 150);
+		},
+
+		undoRecommendedSetup: function(fieldObject) {
+			const snapshot = fieldObject && fieldObject._acfFaUndo;
+			if (!snapshot) return;
+
+			this.restoreFieldSnapshot(fieldObject, snapshot);
+			this.hideUndoSetupButton(fieldObject);
+
+			const labelInput = this.findFieldSettingInput(fieldObject, 'label');
+			const placeholderInput = this.findFieldSettingInput(fieldObject, 'placeholder');
+			const instructionsInput = this.findFieldSettingInput(fieldObject, 'instructions');
 
 			setTimeout(() => {
 				if (labelInput && this.settings.enableLabelSuggestions) {

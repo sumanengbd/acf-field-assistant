@@ -2,6 +2,36 @@
 
 All notable changes to **ACF Field Assistant** are documented in this file.
 
+## [1.3.0] - 2026-10-09
+
+### Added
+- **Type Cycle shortcuts** — After **Add Field**, press `Alt+T` / `Alt+R` / etc. to cycle field types grouped by **first letter** of the type slug (A–Z sorted)
+- **Shortcut settings panel** — `Alt+Shift+A` opens a panel to change modifier (`Alt` or `Ctrl+Shift`) and edit which types each letter cycles
+- Toast shows the active field type after each cycle
+- Works only on the **Edit Field Group** screen
+
+### Changed
+- Version bumped to 1.3.0
+
+### Note
+- Chrome reserves `Ctrl+T` / `Ctrl+R` for the browser, so those keys cannot be used for field cycling
+
+---
+
+## [1.2.0] - 2026-10-09
+
+### Added
+- **Undo Apply Setup** — Restore the previous label, name, placeholder, and instructions for 12 seconds after applying
+- **Per-site recently used** — Recent pills are stored per website, so projects stay separate
+- **Repeater context labels** — Nested fields inside Team, FAQ, Slides, Testimonials, etc. suggest relevant child labels
+- **Placeholder tone** — Choose `Enter your…`, `Label...`, or short placeholders in the popup
+
+### Changed
+- URL field labels now suggest Website, Profile URL, Video URL, and Button Link instead of Image
+- Version bumped to 1.2.0
+
+---
+
 ## [1.1.0] - 2026-07-21
 
 ### Added

@@ -10,12 +10,17 @@ const COMMAND_TARGETS = {
 };
 
 chrome.commands.onCommand.addListener((command) => {
-	const target = COMMAND_TARGETS[command];
-	if (!target) return;
-
 	chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 		const tab = tabs && tabs[0];
 		if (!tab || !tab.id) return;
+
+		if (command === 'quick-add-field') {
+			chrome.tabs.sendMessage(tab.id, { action: 'quick-add-field' });
+			return;
+		}
+
+		const target = COMMAND_TARGETS[command];
+		if (!target) return;
 
 		chrome.tabs.sendMessage(tab.id, {
 			action: 'focus-suggestions',
